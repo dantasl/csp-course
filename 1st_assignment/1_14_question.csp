@@ -1,6 +1,14 @@
--- Channel definitions
-channel in, out, east, west, north, south
+-- 1.14: Solving a maze with different alphabets.
 
--- Maze process
-MAZEONE =
-    in -> east -> south -> west -> south -> out -> STOP
+channel in, out
+channel east, west, north, south
+channel left, right, forward, back
+
+MAZECARDINALDIRECTIONS =
+    in -> east -> east -> east -> south -> south -> south -> out -> STOP
+
+MAZE =
+    in -> forward -> forward -> forward -> right -> forward -> forward -> out -> STOP
+
+assert MAZE:[deadlock free]
+assert MAZECARDINALDIRECTIONS:[deadlock free]
