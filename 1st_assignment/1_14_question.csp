@@ -1,0 +1,6 @@
+-- Channel definitions
+channel in, out, east, west, north, south
+
+-- Maze process
+MAZEONE =
+    in -> east -> south -> west -> south -> out -> STOP

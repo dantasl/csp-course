@@ -1,0 +1,14 @@
+-- 1.3: Write a CSP description of a multiplication component which has three input channels in1, in2, and in3, and one output channel out. It reads in one number from each input channel (in any order) and outputs their product.
+
+channel in1, in2, in3 : {0..100}
+channel out : {0..1000000}
+
+MULTIPLICATIONCOMPONENT =
+    in1?x -> in2?y -> in3?z -> out!(x * y * z) -> MULTIPLICATIONCOMPONENT
+    [] in1?x -> in3?z -> in2?y -> out!(x * y * z) -> MULTIPLICATIONCOMPONENT
+    [] in2?y -> in1?x -> in3?z -> out!(x * y * z) -> MULTIPLICATIONCOMPONENT
+    [] in2?y -> in3?z -> in1?x -> out!(x * y * z) -> MULTIPLICATIONCOMPONENT
+    [] in3?z -> in1?x -> in2?y -> out!(x * y * z) -> MULTIPLICATIONCOMPONENT
+    [] in3?z -> in2?y -> in1?x -> out!(x * y * z) -> MULTIPLICATIONCOMPONENT
+
+assert MULTIPLICATIONCOMPONENT:[deadlock free]

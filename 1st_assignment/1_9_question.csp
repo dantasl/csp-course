@@ -1,0 +1,8 @@
+-- Define a variant of the COPY process which accepts a value on its input channel, and stops if that value is 0, otherwise it outputs it and begins again.
+
+channel in, out : {0..100}
+
+COPY =
+    in?x -> (if x == 0 then STOP else out!x -> COPY)
+
+-- Cannot use this because it has a STOP. assert COPY:[deadlock free]

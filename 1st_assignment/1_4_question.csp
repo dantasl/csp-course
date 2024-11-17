@@ -1,0 +1,11 @@
+-- 1.4: Write a CSP description of a small fast food outlet which serves only two items: burgers at 75p, and chicken at 95p. The sequence of interactions involves placing an order for one of the items, paying for the order, and receiving the order. Only one customer at a time can be handled.
+
+channel orderburger, orderchicken
+channel pay75, pay95
+channel receiveburger, receivechicken
+
+FASTFOOD = orderburger -> pay75 -> receiveburger -> FASTFOOD
+           []
+           orderchicken -> pay95 -> receivechicken -> FASTFOOD
+
+assert FASTFOOD:[deadlock free]

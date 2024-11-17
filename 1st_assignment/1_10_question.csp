@@ -1,0 +1,10 @@
+-- 1.10: Define a process with an interface consisting of the events press and finish.Z. It accepts a number of press events, and then outputs along the channel finish the number of press events that have occurred, after which it stops.
+
+channel press, finish : {0..100}
+
+COUNTER = COUNTERPRESS(0)
+COUNTERPRESS(n) =
+    press -> CountPresses(n + 1)
+    [] finish!n -> STOP
+
+assert COUNTER:[deadlock free]

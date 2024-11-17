@@ -1,0 +1,10 @@
+-- 1.12: Write a process which offers a choice between three bus routes.
+
+channel route1, route2, route3
+
+ROUTES =
+    route1 -> ROUTES
+    [] route2 -> ROUTES
+    [] route3 -> ROUTES
+
+assert ROUTES:[deadlock free]

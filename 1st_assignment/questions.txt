@@ -1,0 +1,15 @@
+1.2: Write a CSP description of a square-root server with channels in and out.
+
+1.3: Write a CSP description of a multiplication component which has three input channels in1, in2, and in3, and one output channel out. It reads in one number from each input channel (in any order) and outputs their product.
+
+1.4: Write a CSP description of a small fast food outlet which serves only two items: burgers at 75p, and chicken at 95p. The sequence of interactions involves placing an order for one of the items, paying for the order, and receiving the order. Only one customer at a time can be handled.
+
+1.9: Define a variant of the COPY process which accepts a value on its input channel, and stops if that value is 0, otherwise it outputs it and begins again.
+
+1.10: Define a process with an interface consisting of the events press and finish.Z. It accepts a number of press events, and then outputs along the channel finish the number of press events that have occurred, after which it stops.
+
+1.12: Write a process which offers a choice between three bus routes.
+
+1.14: Write a process which describes the pattern of choices presented by the maze in Figure 1.11:
+    1. if the alphabet is {east, west, north, south, in, out}
+    2. if the alphabet is {left, right, forward, back, in, out}, where for example right means ‘turn right and then move’.
