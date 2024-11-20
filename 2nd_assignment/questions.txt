@@ -1,0 +1,11 @@
+1.5: Give the transition graph for process PRINTER of Example 1.9.
+
+1.6: Give the transition graph for the process HEATER of Example 1.18.
+
+1.7: Give the transition graph for the process COPY of Example 1.15.
+
+1.15: Give the transition graph of the process SERVICE of Example 1.24.
+
+2.1: Give the transition graph for MACHINE of Example 2.4.
+
+2.2: Give the transition graph for CUST || ATT of Example 2.3.  What behaviour does this parallel combination exhibit that you would not expect to find in a real cloakroom system? Amend the descriptions of the interacting parties CUST and ATT appropriately to remove this possibility.

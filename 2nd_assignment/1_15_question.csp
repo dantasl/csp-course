@@ -1,0 +1,17 @@
+datatype ROUTE = R37 | R111
+datatype STATION = A | B
+datatype FARE = F90 | F70
+
+channel board : ROUTE.STATION
+channel alight : ROUTE.STATION
+channel pay : ROUTE.FARE
+
+BUS_37 = board.R37.A -> 
+          ((pay.R37.F90 -> alight.R37.B -> STOP) 
+           [] (alight.R37.A -> STOP))
+
+BUS_111 = board.R111.A -> 
+           ((pay.R111.F70 -> alight.R111.B -> STOP) 
+            [] (alight.R111.A -> STOP))
+
+SERVICE = BUS_37 [] BUS_111

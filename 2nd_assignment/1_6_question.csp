@@ -1,0 +1,6 @@
+channel up, down
+
+HEATER(0) = up -> HEATER(1)
+HEATER(1) = up -> HEATER(2) [] down -> HEATER(0)
+HEATER(2) = up -> HEATER(3) [] down -> HEATER(1)
+HEATER(3) = down -> HEATER(2)

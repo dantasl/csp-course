@@ -1,0 +1,9 @@
+channel coat_off, coat_on, store, retrieve, enter, eat
+
+ATT = (coat_off -> store -> ATT) [] (retrieve -> coat_on -> ATT)
+CUST = enter -> coat_off -> eat -> coat_on -> CUST
+
+ATT_CUST = ATT [| {coat_off, coat_on} |] CUST
+
+-- I noticed that it is possible for the attendant to store and retrieve the coat while the customer didn't even eat.
+-- It is also possible to retrieve a coat even if no other coats were stored.

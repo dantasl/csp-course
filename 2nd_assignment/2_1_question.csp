@@ -1,0 +1,6 @@
+channel cash, ticket, change
+
+TICKET = cash -> ticket -> TICKET
+CHANGE = cash -> change -> CHANGE
+
+MACHINE = TICKET [| {cash} |] CHANGE

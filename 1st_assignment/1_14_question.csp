@@ -10,5 +10,5 @@ MAZECARDINALDIRECTIONS =
 MAZE =
     in -> forward -> forward -> forward -> right -> forward -> forward -> out -> STOP
 
-assert MAZE:[deadlock free]
-assert MAZECARDINALDIRECTIONS:[deadlock free]
+-- assert MAZE:[deadlock free]
+-- assert MAZECARDINALDIRECTIONS:[deadlock free]
