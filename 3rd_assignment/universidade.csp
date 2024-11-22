@@ -1,0 +1,15 @@
+ANO_GRAD = 4
+ANO = {1..ANO_GRAD}
+
+channel ano:ANO
+channel passar, reprovar, graduar
+
+ESTUDANTE1 = ano.1 -> (passar -> ESTUDANTE2 [] reprovar -> ESTUDANTE1)
+
+ESTUDANTE2 = ano.2 -> (passar -> ESTUDANTE3 [] reprovar -> ESTUDANTE2)
+ 
+ESTUDANTE3 = ano.3 -> (passar -> ESTUDANTE4 [] reprovar -> ESTUDANTE3)
+
+ESTUDANTE4 = ano.4 -> (passar -> FORMANDO [] reprovar -> ESTUDANTE4)
+
+FORMANDO = graduar -> SKIP

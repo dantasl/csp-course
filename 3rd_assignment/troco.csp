@@ -1,0 +1,8 @@
+channel ent5c, ent1real, saida1c, saida2c
+
+T5C = ent5c -> TROCO(5)
+T1R = ent1real -> TROCO(100)
+TROCO(n) = 
+    (n >= 2) & saida2c -> TROCO(n-2)
+    []
+    (n >= 1) & saida1c -> TROCO(n-1)

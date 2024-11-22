@@ -1,0 +1,49 @@
+channel ano1, ano2, ano3, ano4, passar, reprovar, formatura, presente, premio
+
+S = {| ano1, ano2, ano3, ano4, passar, reprovar, formatura |}
+
+P = {| passar, presente |}
+
+C = {| passar, reprovar, premio |}
+
+ESTUDANTE = ano1 -> (passar -> ANO2 [] reprovar -> ESTUDANTE)
+
+ANO2 = ano2 -> (passar -> ANO3 [] reprovar -> ANO2)
+
+ANO3 = ano3 -> (passar -> ANO4 [] reprovar -> ANO3)
+
+ANO4 = ano4 -> (passar -> formatura -> STOP [] reprovar -> ANO4)
+
+PAIS = passar -> presente -> PAIS
+
+
+
+UNI = reprovar -> SEMPREMIO [] passar -> C1
+
+C1 = reprovar -> SEMPREMIO [] passar -> C2
+
+C2 = reprovar -> SEMPREMIO [] passar -> C3
+
+C3 = reprovar -> SEMPREMIO [] passar -> premio -> STOP
+
+SEMPREMIO = reprovar -> SEMPREMIO [] passar -> SEMPREMIO
+
+
+SISTEMA = (ESTUDANTE [ S || P ] PAIS) [ union(S,P) || C ] UNI
+
+
+UNI2 = UNI2AUX(1, 0)
+UNI2AUX(ano, reprovacoes) =
+    if ano == 4 then
+        if reprovacoes <= 1 then
+            premio -> STOP
+        else
+            STOP
+    else
+        passar -> UNI2AUX(ano + 1, reprovacoes) [] reprovar -> UNI2AUX(ano, reprovacoes + 1)
+
+SISTEMA2 = (ESTUDANTE [ S || P ] PAIS) [ union(S,P) || C ] UNI2
+
+-- 2.4.3: Por mais que os eventos de anos sejam consecutivos (primeiro ano1, depois ano2, etc.), os eventos de 'presente' e 'premio' podem acontecer em diferentes ordens, desde que estejam habilitados. 'presente' é habilitado 4 vezes, 'premio' é habilitado 1 vez. Permutando esses 5 eventos, com 4 deles sendo idênticos, temos 5! / 4! = 5. O número de caminhos únicos completos, que não envolvem o evento 'reprovar', é de 5.
+
+-- 2.5.1: Os traces da composição paralela P [ A || B ] Q são um subconjunto dos traces de P e Q, definidos pelas regras de sincronização nos eventos compartilhados (A intercessão B) e pela independência dos eventos não compartilhados. Eventos compartilhados só ocorrem se P e Q os realizarem simultaneamente, enquanto eventos independentes podem ocorrer livremente. Com os traces de P e Q e os alfabetos A e B, é possível prever os traces de P [ A || B ] Q ao combinar os traces e respeitar as regras de sincronização.

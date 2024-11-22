@@ -1,0 +1,20 @@
+channel cima, baixo, esquerda, meio, direita
+
+CB = cima -> baixo -> CB
+
+ED = esquerda -> direita -> meio -> ED
+
+CBA = {| cima,baixo |}
+EDA = {| esquerda,direita |}
+
+CBED = CB [ CBA || EDA ] ED
+
+assert CBED:[deadlock free]
+
+-- 2.3.2 : Nenhuma sincronização se faz necessária, já que os alfabetos CBA e EDA são disjuntos. As transições encontram-se desenhadas no arquivo independente_transicoes.bmp.
+
+-- 2.3.3: ED pode estar em 2 estados, assim como CB. CBED, por sua vez, pode estar em 4 estados (2 * 2). Isso acontece porque na composição paralela, o número de estados é o produto entre a quantidade de estados de cada alfabeto.
+
+-- 2.3.5 : Com a alteração na máquina para adicionar o evento 'meio', CBED possui agora 6 estados possíveis (2 * 3). No entanto, como 'meio' não faz parte de EDA, não é possível interagir com esse evento ao emular CBED no ProBe.
+
+-- 2.3.6 : ESTUDANTE1 tem 10 estados. PAIS tem 2 estados. SISTEMA possui 20 estados (10 * 2).
