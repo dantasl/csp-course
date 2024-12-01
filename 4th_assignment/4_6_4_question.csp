@@ -1,0 +1,13 @@
+channel a, b, c, d, e
+
+A = {a, b, c}
+B = {a, b, c, d, e}
+BA = {d, e}
+
+P_A = a -> b -> c -> SKIP
+
+PA_BA = P_A [| {} |] RUN(BA)
+
+assert PA_BA [T= (P_A ||| RUN(BA))
+
+-- Como os alfabetos são disjuntos, é possível simplificar a operação como P_A ||| RUN(BA).

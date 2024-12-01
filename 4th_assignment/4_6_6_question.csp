@@ -1,0 +1,12 @@
+channel a, b, c, d
+
+A = {a, b, c}
+B = {a, b, c, d}
+
+P_A = a -> b -> c -> SKIP
+
+PA_STOP = P_A [| B |] STOP
+
+-- De maneira análoga a questão 4.6.5, sincronizar com STOP pode simplismente ser expressado como STOP.
+
+assert PA_STOP [T= STOP

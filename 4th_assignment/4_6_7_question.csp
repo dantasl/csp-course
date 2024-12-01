@@ -1,0 +1,25 @@
+channel a, b, c, d, e
+
+A1 = {a, b, c}
+B1 = {b, d, e}
+
+P_A1 = a -> b -> c -> SKIP
+
+PA_STOP1 = P_A1 [| B1 |] STOP
+
+-- Existem dois cenários a serem verificados, dependendo do alfabeto de A e B. Caso a intercessão deles não seja vazia (eles possuem 1 ou mais eventos em comum), P_A necessitaria ter que sincronizar com STOP, o que basicamente resulta em nenhum evento ser habilitado. A simplificação então é basicamente o STOP. 
+
+assert PA_STOP1 [T= STOP
+
+-- Porém, no segundo cenário em que a intercessão é vazia, a simplificação é diferente. Vejamos:
+
+A2 = {a, c}
+B2 = {b, d, e}
+
+P_A2 = a -> c -> STOP
+
+PA_STOP2 = P_A2 [| B2 |] STOP
+
+-- Nesse caso, como os alfabetos são disjuntos, P_A2 não precisa fazer sincronização, então podemos simplificar como P_A2.
+
+assert PA_STOP2 [T= P_A2

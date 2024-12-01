@@ -1,0 +1,5 @@
+Não observo uma maneira de simplificar o que está descrito no Exercício 4.6.3.
+
+Isto porque B não é um subconjunto de A, então existem eventos habilitados em B que não são possíveis de serem realizados em A.
+
+Desta forma, se faz necessário que a sincronização ocorra como descrita para garantir que o sistema estará se comportando como o esperado.

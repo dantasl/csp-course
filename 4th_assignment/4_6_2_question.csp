@@ -1,0 +1,12 @@
+channel a, b, c
+
+A = {a, b, c}
+B = {a, b}
+
+P_A = a -> b -> c -> SKIP
+
+PA_RUNB = P_A [| B |] RUN(B)
+
+-- Novamente, PA_RUNB pode ser simplificado como P_A. Já que B é um subconjunto de A, e RUN(B) habilita todas as sequências possíveis de B, P_A não está sendo restringido.
+
+assert P_A [T= PA_RUNB

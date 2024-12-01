@@ -1,0 +1,7 @@
+Primeira máquina:
+
+{⟨⟩,⟨tau⟩,⟨tau,c⟩,⟨a⟩,⟨a,b⟩}
+
+A segunda máquina, por permitir loops, tem o potencial para gerar uma quantidade infinita de traces. Podemos representar os traces da seguinte forma:
+
+{⟨⟩,⟨aˆn⟩,⟨bˆm⟩,⟨aˆn,b^m⟩,⟨bˆm,a^n⟩,⟨a^n,b^m,c⟩,⟨b^m,a^n,c⟩ ∣ n,m >= 0}
