@@ -1,0 +1,3 @@
+Exercício 5.3: A sequência tr deve começar com ⟨a, b, c⟩.
+
+Exercício 5.4: Se o último evento na sequência tr for b, então o evento a deve estar presente em algum lugar na sequência.

@@ -1,0 +1,4 @@
+channel in  : {0..4}
+channel out : {0..4}
+
+PROCESSO = in?x -> out?y -> if x >= y then PROCESSO else STOP

@@ -1,0 +1,5 @@
+channel coin, change, ticket
+
+PROCESSO1 = coin -> change -> SKIP [] coin -> ticket -> SKIP
+
+-- Os traces de PROCESSO1 são: {<>,<coin>, <coin, change>, <coin, change, SKIP>, <coin, ticket>, <coin, ticket, SKIP>}
