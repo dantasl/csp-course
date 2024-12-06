@@ -1,0 +1,42 @@
+channel ano1, ano2, ano3, passar, reprovar, graduar, presente
+
+D = {| ano1, ano2, ano3, passar, reprovar, graduar |}
+
+P = {| passar, presente |}
+
+ESTUDANTE = ano1 -> (passar -> ANO2 [] reprovar -> ESTUDANTE)
+
+ANO2 = ano2 -> (passar -> ANO3 [] reprovar -> ANO2)
+
+ANO3 = ano3 -> (passar -> graduar -> STOP [] reprovar -> ANO3)
+
+PAIS = passar -> presente -> PAIS
+
+SISTEMA = ESTUDANTE [ D || P ] PAIS
+
+SPEC_EST = passar -> passar -> passar -> graduar -> STOP
+
+SPEC_ANOS = ano1 -> SPEC_ANOS [] ano2 -> SPEC_ANOS2
+
+SPEC_ANOS2 = ano2 -> SPEC_ANOS2
+
+assert SPEC_EST [T= ESTUDANTE
+
+-- 1.2.2 : ESTUDANTE pode fazer outros eventos (como ano1, por exemplo) que não estão habilitados em SPEC_EST.
+
+E = {| ano1, ano2, ano3, reprovar, presente |}
+SP = {| passar, graduar |}
+EXTRA = [] x:E @ x -> EXTRA
+SPEC = SPEC_EST [SP || E] EXTRA
+
+assert SPEC [T= ESTUDANTE 
+
+-- 1.2.4 : Ao definir EXTRA, E, SP e SPEC, a especificação agora é satisfeita.
+
+-- 1.2.5 : Ao fazer 'assert SPEC [T= SISTEMA', temos um erro. Isso porque SISTEMA estava esperando fazer 'presente' após passar, e esse evento não se encontra habilitado. Basta incluir 'presente' como um dos eventos habilitados no alfabeto de E.
+
+assert SPEC [T= SISTEMA
+
+-- 1.2.6 : Ao fazer 'assert SPEC_ANOS [T= ESTUDANTE', novamente temos um erro. Isso porque ESTUDANTE está esperando fazer 'passar' após ano1, e este evento não está habilitado.
+
+assert SPEC_ANOS [T= ESTUDANTE

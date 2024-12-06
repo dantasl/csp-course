@@ -1,0 +1,126 @@
+-- Os filósofos glutões com um maitre
+
+channel pegar:{0..4}.{0..4}
+channel colocar:{0..4}.{0..4}
+channel sentar:{0..4}
+channel levantar:{0..4}
+
+inc(x) = (x + 1) % 5
+dec(x) = (x - 1) % 5
+
+FIL(i) =  sentar.i -> pegar.i.inc(i) -> pegar.i.i ->
+           colocar.i.inc(i) -> colocar.i.i -> levantar.i -> FIL(i)
+
+GARFO(i) = pegar.i.i -> colocar.i.i -> GARFO(i)
+        [] pegar.dec(i).i -> colocar.dec(i).i -> GARFO(i)
+
+FILS = || i:{0..4} @ [{|pegar.i.i, pegar.i.inc(i),
+                         colocar.i.i, colocar.i.inc(i),
+                         sentar.i, levantar.i|}]
+                    FIL(i)
+
+GARFOS = || i:{0..4} @ [{|pegar.i.i, colocar.i.i,
+                         pegar.dec(i).i, colocar.dec(i).i|}]
+                    GARFO(i)
+
+MESA = FILS [ {|pegar,colocar,sentar,levantar|} ||
+                  {|pegar,colocar|} ]  GARFOS
+
+assert MESA:[deadlock free]
+
+MAITRE(i) = if i == 0
+            then sentar?x -> MAITRE(1)
+            else if i == 4
+                 then levantar?y -> MAITRE(3)
+                 else (  sentar?x -> MAITRE(i+1)
+                      [] levantar?y -> MAITRE(i-1) )
+
+-- 2.1.6: Agora coloque a MESA em paralelo com o MAITRE
+MESA_MAITRE = (MESA [| {|sentar, levantar|} |] MAITRE(0))
+
+assert MESA_MAITRE:[deadlock free]
+
+-- 2.1.7: Garfos em ordem trocada. Também funciona, essa é uma estratégia clássica.
+
+FIL_TROCADO(i) = if i == 0 
+               then sentar.i -> pegar.i.i -> pegar.i.inc(i) ->
+                    colocar.i.i -> colocar.i.inc(i) -> levantar.i -> FIL_TROCADO(i)
+               else sentar.i -> pegar.i.inc(i) -> pegar.i.i ->
+                    colocar.i.inc(i) -> colocar.i.i -> levantar.i -> FIL_TROCADO(i)
+
+FILS_TROCADO = || i:{0..4} @ [{|pegar.i.i, pegar.i.inc(i),
+                               colocar.i.i, colocar.i.inc(i),
+                               sentar.i, levantar.i|}]
+                        FIL_TROCADO(i)
+
+MESA_TROCADO = FILS_TROCADO [ {|pegar,colocar,sentar,levantar|} ||
+                            {|pegar,colocar|} ] GARFOS
+
+assert MESA_TROCADO:[deadlock free]
+
+-- 2.1.8: Filósofos pegando os garfos em qualquer ordem. Esse sistema NÃO será livre de deadlocks, pois existem combinações que se tornam possíveis e ao mesmo tempo levam a um deadlock.
+
+FIL_LIVRE(i) = sentar.i ->
+              (pegar.i.i -> pegar.i.inc(i) ->
+               colocar.i.i -> colocar.i.inc(i) -> levantar.i -> FIL_LIVRE(i)
+              []
+               pegar.i.inc(i) -> pegar.i.i ->
+               colocar.i.inc(i) -> colocar.i.i -> levantar.i -> FIL_LIVRE(i))
+
+FILS_LIVRE = || i:{0..4} @ [{|pegar.i.i, pegar.i.inc(i),
+                            colocar.i.i, colocar.i.inc(i),
+                            sentar.i, levantar.i|}]
+                         FIL_LIVRE(i)
+
+MESA_LIVRE = FILS_LIVRE [ {|pegar, colocar, sentar, levantar|} ||
+                         {|pegar, colocar|} ] GARFOS
+
+assert MESA_LIVRE:[deadlock free]
+
+-- 2.1.9: Filósofos devolvem o garfo que pegaram caso ainda não possuam ambos os garfos. Essa estratégia evita deadlock, mas pode causar livelock.
+
+FIL_DEVOLVEM(i) = sentar.i ->
+                 pegar.i.i -> (
+                     pegar.i.inc(i) -> 
+                         colocar.i.inc(i) -> colocar.i.i -> levantar.i -> FIL_DEVOLVEM(i) 
+                     [] colocar.i.i -> FIL_DEVOLVEM(i)
+                 )
+                 [] pegar.i.inc(i) -> (
+                     pegar.i.i -> 
+                         colocar.i.i -> colocar.i.inc(i) -> levantar.i -> FIL_DEVOLVEM(i) 
+                     [] colocar.i.inc(i) -> FIL_DEVOLVEM(i)
+                 )
+
+FILS_DEVOLVEM = || i:{0..4} @ [{|pegar.i.i, pegar.i.inc(i),
+                                colocar.i.i, colocar.i.inc(i),
+                                sentar.i, levantar.i|}]
+                             FIL_DEVOLVEM(i)
+
+MESA_DEVOLVEM = FILS_DEVOLVEM [ {|pegar, colocar, sentar, levantar|} ||
+                               {|pegar, colocar|} ] GARFOS
+
+assert MESA_DEVOLVEM:[deadlock free]
+
+-- 2.1.10: Filósofos com apenas dois garfos disponíveis. Conseguimos evitar deadlock, mas introduzimos a possibilidade de starvation e unfairness.
+
+channel pegar_dois:{1..2}.{0..4}
+channel colocar_dois:{1..2}.{0..4}
+
+FIL_DOIS_GARFOS(i) = sentar.i ->
+             pegar_dois.1.i -> pegar_dois.2.i ->
+             colocar_dois.2.i -> colocar_dois.1.i -> levantar.i -> FIL_DOIS_GARFOS(i)
+
+GARFO_COMPARTILHADO(f) = pegar_dois.f?x -> colocar_dois.f.x -> GARFO_COMPARTILHADO(f)
+
+FILS_DOIS_GARFOS = || i:{0..4} @ [{|pegar_dois.1.i, pegar_dois.2.i,
+                                    colocar_dois.1.i, colocar_dois.2.i,
+                                    sentar.i, levantar.i|}]
+                        FIL_DOIS_GARFOS(i)
+
+GARFOS_COMPARTILHADOS = || f:{1..2} @ [{|pegar_dois.f.x, colocar_dois.f.x | x:{0..4}|}]
+                            GARFO_COMPARTILHADO(f)
+
+MESA_DOIS_GARFOS = FILS_DOIS_GARFOS [ {|pegar_dois, colocar_dois, sentar, levantar|} ||
+                                       {|pegar_dois, colocar_dois|} ] GARFOS_COMPARTILHADOS
+
+assert MESA_DOIS_GARFOS:[deadlock free]
