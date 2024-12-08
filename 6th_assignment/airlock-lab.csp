@@ -1,0 +1,141 @@
+-- Tipos de dados
+
+datatype LOCAL = interna | externa
+
+datatype ACAO = abrir | fechar
+
+channel porta, valvula : LOCAL.ACAO
+
+-- Portas e v�lvulas
+
+PORTAINTERNA =  porta.interna.abrir -> porta.interna.fechar -> PORTAINTERNA 
+
+VALVULAINTERNA = valvula.interna.abrir -> valvula.interna.fechar -> VALVULAINTERNA 
+
+PORTAEXTERNA =  porta.externa.abrir -> porta.externa.fechar -> PORTAEXTERNA 
+
+VALVULAEXTERNA =  valvula.externa.abrir -> valvula.externa.fechar -> VALVULAEXTERNA 
+
+PORTAS = PORTAINTERNA [{|porta.interna|}||{|porta.externa|}] PORTAEXTERNA  
+
+VALVULAS = VALVULAINTERNA [{|valvula.interna|}||{|valvula.externa|}] VALVULAEXTERNA 
+
+COMPONENTES = PORTAS [ {|porta|} || {|valvula|} ] VALVULAS 
+
+-- Especifica��o de seguran�a
+
+SPEC_SEGURA = TODOS_FECHADOS
+
+TODOS_FECHADOS = 
+  valvula.interna.abrir -> IAF
+  [] porta.interna.abrir -> IFA
+  [] valvula.externa.abrir -> EAF
+  [] porta.externa.abrir -> EFA
+
+IAF = valvula.interna.fechar -> TODOS_FECHADOS
+      [] porta.interna.abrir -> IAA
+
+IAA = valvula.interna.fechar -> IFA
+      [] porta.interna.fechar -> IAF
+
+IFA = valvula.interna.abrir -> IAA
+      [] porta.interna.fechar -> TODOS_FECHADOS
+
+EAF = valvula.externa.fechar -> TODOS_FECHADOS
+      [] porta.externa.abrir -> EAA
+
+EAA = valvula.externa.fechar -> EFA
+      [] porta.externa.fechar -> EAF
+
+EFA = valvula.externa.abrir -> EAA
+      [] porta.externa.fechar -> TODOS_FECHADOS
+
+-- Controle que garante que as portas s� abrem ap�s as v�lvulas
+-- estiverem abertas
+
+CONTROLE_P_INT = valvula.interna.abrir -> CONTROLE_P_INT_A
+               [] valvula.interna.fechar -> CONTROLE_P_INT   
+CONTROLE_P_INT_A = valvula.interna.fechar -> CONTROLE_P_INT 
+               [] porta.interna.abrir -> CONTROLE_P_INT_A 
+
+CONTROLE_P_OUT = valvula.externa.abrir -> CONTROLE_P_OUT_A 
+               [] valvula.externa.fechar -> CONTROLE_P_OUT
+CONTROLE_P_OUT_A = valvula.externa.fechar -> CONTROLE_P_OUT 
+               [] porta.externa.abrir -> CONTROLE_P_OUT_A 
+
+CONTROLE_P = 
+   CONTROLE_P_INT
+      [{|valvula.interna, porta.interna.abrir|}||{|valvula.externa, porta.externa.abrir|}]
+   CONTROLE_P_OUT
+
+SISTEMA = 
+  COMPONENTES 
+    [{| porta, valvula |}
+      ||
+     {| valvula.interna, porta.interna.abrir, valvula.externa, porta.externa.abrir|}]
+  CONTROLE_P  
+
+assert SPEC_SEGURA [T= SISTEMA
+
+-- Controle que garante que apenas uma v�lvula e uma porta est� aberta por vez
+
+CONTROLE_VALVULA = valvula.interna.abrir -> valvula.interna.fechar -> CONTROLE_VALVULA 
+                [] valvula.externa.abrir -> valvula.externa.fechar -> CONTROLE_VALVULA 
+
+CONTROLE_PORTA = porta.interna.abrir -> porta.interna.fechar -> CONTROLE_PORTA 
+          [] porta.externa.abrir -> porta.externa.fechar -> CONTROLE_PORTA 
+
+CONTROLE = CONTROLE_VALVULA 
+             [{|valvula.interna, valvula.externa|}||{|porta.interna, porta.externa|}]
+          CONTROLE_PORTA
+
+-- Sistema Airlock
+
+AIRLOCK = SISTEMA [| {| porta, valvula |} |] CONTROLE
+
+assert SPEC_SEGURA [T= AIRLOCK
+
+-- 2.2: A especificação não é satisfeita porque após fazer o evento valvula.externa.abrir, a implementação permite fazer valvula.interna.abrir, quando o aceitável era realizar porta.externa.abrir ou valvula.externa.fechar.
+
+-- 2.3: A especificação não é satisfeita porque após fazer o evento valvula.externa.fechar, a implementação permite fazer valvula.interna.abrir, quando o aceitável era realizar valvula.externa.abrir ou porta.externa.fechar.
+
+-- 2.4: Segue abaixo:
+
+CONTROLE_V_OUT = porta.externa.fechar -> valvula.externa.fechar -> CONTROLE_V_OUT
+
+CONTROLE_V_INT = porta.interna.fechar -> valvula.interna.fechar -> CONTROLE_V_INT
+
+CONTROLES_VALVULAS = CONTROLE_V_INT [|{|valvula.interna, porta.interna|}|] CONTROLE_V_OUT
+
+AIRLOCK2 = (SISTEMA [| {| porta, valvula |} |] CONTROLE)
+            [| {| porta.interna, porta.externa, valvula.interna, valvula.externa |} |]
+            CONTROLES_VALVULAS
+
+assert SPEC_SEGURA [T= AIRLOCK2
+
+-- 2.5: Segue abaixo:
+
+PORTAS_ALTERNAM = porta.interna.abrir -> porta.interna.fechar -> PORTAS_ALTERNAM_EXTERNA
+               [] porta.externa.abrir -> porta.externa.fechar -> PORTAS_ALTERNAM_INTERNA
+
+PORTAS_ALTERNAM_EXTERNA = porta.externa.abrir -> porta.externa.fechar -> PORTAS_ALTERNAM_INTERNA
+PORTAS_ALTERNAM_INTERNA = porta.interna.abrir -> porta.interna.fechar -> PORTAS_ALTERNAM_EXTERNA
+
+assert PORTAS_ALTERNAM [T= AIRLOCK2
+
+-- 2.6: Segue abaixo:
+
+EXTERNA_PORTA_VALVULA_SPEC = VALVULA_ABERTA
+
+VALVULA_ABERTA = valvula.externa.abrir -> PORTA_CONTROLE
+               [] valvula.externa.fechar -> VALVULA_ABERTA
+
+PORTA_CONTROLE = porta.externa.abrir -> porta.externa.fechar -> VALVULA_ABERTA
+              [] valvula.externa.fechar -> VALVULA_ABERTA
+
+-- Essas duas especificações não passam, pois não modelam corretamente o comportamento das válvulas e portas.
+assert EXTERNA_PORTA_VALVULA_SPEC [T= SISTEMA
+assert EXTERNA_PORTA_VALVULA_SPEC [T= AIRLOCK
+
+-- Essa especificação passa, pois Airlock2 modela corretamente o comportamento das válvulas e portas.
+assert EXTERNA_PORTA_VALVULA_SPEC [T= AIRLOCK2
