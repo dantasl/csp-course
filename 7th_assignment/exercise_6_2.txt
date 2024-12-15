@@ -1,0 +1,21 @@
+Trace / Refusals - 1st Question
+
+(<>, {c})
+(<a>, {a, b, c})
+(<b>, {a, b})
+(<b,c>, {a, b, c})
+
+Trace / Refusals - 2nd Question
+
+(<>, {c, d})
+(<a>, {b, c, d})
+(<b>, {a, b})
+(<b,c>, {a, b, c, d})
+(<b,d>, {a, b, c, d})
+
+Trace \ Refusals - 3rd Question
+
+(<>, {b})
+(<a>, {a, b})
+(<a>, {a})
+(<a,b>, {a, b})

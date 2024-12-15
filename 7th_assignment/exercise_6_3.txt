@@ -1,0 +1,34 @@
+Trace / Refusals - 1st Question
+
+(<>, {tea, coffee})
+(<coin>, {coin})
+(<coin,tea>, {coin, tea, coffee})
+(<coin,coffee>, {coin, tea, coffee})
+
+Trace / Refusals - 2nd Question
+
+(<>, {tea})
+(<>, {coffee})
+(<tea>, {tea, coffee})
+(<coffee>, {tea, coffee})
+
+Trace / Refusals - 3rd Question
+
+(<>, {tea, coffee})
+(<coin>, {coin})
+(<coin, tea>, {coin, tea, coffee})
+(<coin, coffee>, {coin, tea, coffee})
+
+Trace / Refusals - 4th Question
+
+(<>, {tea, coffee})
+(<coin>, {coin, coffee})
+(<coin,tea>, {coin, tea, coffee})
+(<coin>, {coin, tea})
+(<coin,coffee>, {coin, tea, coffee})
+
+Trace / Refusals - 5th Question
+
+(<>, {coffee})
+(<coin>, {coin})
+(<coin, coffee>, {coin, coffee})

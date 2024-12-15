@@ -1,0 +1,48 @@
+datatype ACTIONS = enter | leave | select | pay
+
+channel customer : ACTIONS
+channel shop : ACTIONS
+
+SHOPPING =
+    (customer.select -> SHOPPING)
+  []
+    (customer.pay -> SHOPPING)
+  []
+    (customer.leave -> customer.enter -> SHOPPING)
+
+SECURITY =
+    (customer.select -> WATCH)
+  []
+    (customer.pay -> SECURITY)
+  []
+    (customer.leave -> SECURITY)
+
+WATCH =
+    (customer.select -> WATCH)
+  []
+    (customer.pay -> SECURITY)
+
+BROWSING = customer.select -> TILL
+
+TILL = 
+    (customer.select -> TILL)
+  []
+    (customer.pay -> BROWSING)
+
+SECURE_SHOP = SHOPPING [| {customer.select, customer.pay, customer.leave} |] SECURITY
+
+DISHONEST_CUSTOMER = customer.enter -> customer.select -> (customer.pay -> customer.leave -> DISHONEST_CUSTOMER [] customer.leave -> DISHONEST_CUSTOMER)
+
+SHOP = SECURE_SHOP [| { customer.select, customer.pay } |] BROWSING
+
+SHOP_DISHONEST = SHOP [| { customer.select, customer.pay, customer.leave } |] DISHONEST_CUSTOMER
+
+-- External vs Internal Choice in DISHONEST_CUSTOMER:
+
+-- External Choice ( [] ):
+-- If customer.pay is available, the pay branch can proceed.
+-- It doens't even allow customer.leave as an option, so the dishonest customer will always pay.
+
+-- Internal Choice ( |~| ):
+-- The decision between customer.pay and customer.leave is made internally.
+-- Since the SHOP is secure and synchronizes with customer.pay, if an internal choice is made to leave, the dishonest customer will be in a deadlock state, and no other events will be available to them.

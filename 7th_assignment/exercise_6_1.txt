@@ -1,0 +1,15 @@
+Trace / Refusals - Left State Machine
+
+(<a>, {a, c})
+(<a,b>, {a, b})
+(<a, b, c>, {a, b, c})
+(<>, {a, b})
+(<c>, {a, b, c})
+
+Trace / Refusals - Right State Machine
+
+(<>, {b, c})
+(<a>, {a, c})
+(<a,b>, {a, b, c})
+(<a,b>, {a, b})
+(<a,b,c>, {b, c})
